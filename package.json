@@ -24,8 +24,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ajsb85/glcd-font-studio.git"
+    "url": "git+https://github.com/ajsb85/glcd-web-app.git"
   },
-  "author": "Embedded Dev",
-  "license": "MIT"
+  "author": "Alexander Salas Bastidas <ajsb85@firechip.dev>",
+  "license": "MIT",
+  "homepage": "https://ajsb85.github.io/glcd-web-app/"
 }
