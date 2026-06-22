@@ -18,6 +18,7 @@ const parseBtn = document.getElementById('parse-btn') as HTMLButtonElement;
 const systemFontSelect = document.getElementById('system-font-select') as HTMLSelectElement;
 const ttfUpload = document.getElementById('font-file') as HTMLInputElement;
 const generateBtn = document.getElementById('generate-btn') as HTMLButtonElement;
+const scanFontsBtn = document.getElementById('scan-fonts-btn') as HTMLButtonElement;
 
 function initCanvas() {
     const [w, h] = displaySelect.value.split('x').map(Number);
@@ -100,6 +101,30 @@ colorBtns.forEach(btn => {
 parseBtn.addEventListener('click', parseArray);
 testInput.addEventListener('input', () => emulator.renderText(testInput.value, currentFont));
 generateBtn.addEventListener('click', generateArray);
+
+scanFontsBtn.addEventListener('click', async () => {
+    try {
+        if ('queryLocalFonts' in window) {
+            const fonts = await (window as any).queryLocalFonts();
+            systemFontSelect.innerHTML = '';
+            
+            const families = new Set<string>();
+            for (const font of fonts) families.add(font.family);
+            
+            Array.from(families).sort().forEach(family => {
+                const opt = document.createElement('option');
+                opt.value = family;
+                opt.textContent = family;
+                systemFontSelect.appendChild(opt);
+            });
+            showStatus(`Successfully scanned ${families.size} system fonts!`, true);
+        } else {
+            showStatus('OS font scanning requires Chrome/Edge (Local Font Access API).', false);
+        }
+    } catch (e: any) {
+        showStatus('Font scan failed: ' + e.message, false);
+    }
+});
 
 ttfUpload.addEventListener('change', async (e) => {
     const target = e.target as HTMLInputElement;
