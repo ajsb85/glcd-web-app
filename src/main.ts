@@ -3,20 +3,20 @@ import { parseStandard, parseVisualTFT, parseFT800 } from './core/parser';
 import { generateFontBytes, parseCharRange } from './core/generator';
 import { FontData, ExportFormat } from './core/types';
 
-const emulator = new Emulator('lcd-canvas');
+const emulator = new Emulator('glcd-canvas');
 let currentFont: FontData | null = null;
 
 const displaySelect = document.getElementById('display-type') as HTMLSelectElement;
 const colorBtns = document.querySelectorAll('.color-btn');
 const arrayInput = document.getElementById('c-array-input') as HTMLTextAreaElement;
-const testInput = document.getElementById('test-input') as HTMLTextAreaElement;
-const statusMsg = document.getElementById('status-msg') as HTMLDivElement;
-const formatSelect = document.getElementById('format-select') as HTMLSelectElement;
+const testInput = document.getElementById('test-text') as HTMLInputElement;
+const statusMsg = document.getElementById('parse-status') as HTMLDivElement;
+const formatSelect = document.getElementById('export-format') as HTMLSelectElement;
 const parseBtn = document.getElementById('parse-btn') as HTMLButtonElement;
 
 // Font generation UI
 const systemFontSelect = document.getElementById('system-font-select') as HTMLSelectElement;
-const ttfUpload = document.getElementById('ttf-upload') as HTMLInputElement;
+const ttfUpload = document.getElementById('font-file') as HTMLInputElement;
 const generateBtn = document.getElementById('generate-btn') as HTMLButtonElement;
 
 function initCanvas() {
@@ -65,7 +65,7 @@ function generateArray() {
         const isItalic = (document.getElementById('font-italic') as HTMLInputElement).checked;
         const invert = (document.getElementById('invert-pixels') as HTMLInputElement).checked;
         const exportFormat = formatSelect.value as ExportFormat;
-        const charsInput = (document.getElementById('char-range') as HTMLInputElement).value;
+        const charsInput = (document.getElementById('render-chars') as HTMLInputElement).value;
         
         let fontFamily = systemFontSelect.value;
         if (ttfUpload.files && ttfUpload.files.length > 0) {
