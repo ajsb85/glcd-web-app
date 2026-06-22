@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLCD Font Creator & Emulator</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📺</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass-panel" style="width: 420px; overflow-y: auto;">
+            <div class="header">
+                <h2>GLCD Font Studio</h2>
+                <p>Native Browser Font Creator & Emulator</p>
+            </div>
+
+            <!-- New Generator Controls -->
+            <div class="control-group" style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <label style="color: #a855f7;">1. Select Source Font</label>
+                
+                <div style="margin-top: 8px;">
+                    <label style="font-size: 11px;">SYSTEM FONTS</label>
+                    <div style="display: flex; gap: 8px; margin-top: 4px;">
+                        <select id="system-font-select" style="flex: 1;">
+                            <option value="monospace">monospace (Default)</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                        </select>
+                        <button id="scan-fonts-btn" class="primary-btn" style="padding: 8px 12px;" title="Scan all installed fonts">Scan OS</button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px;">
+                    <label style="font-size: 11px;">OR UPLOAD CUSTOM TTF</label>
+                    <input type="file" id="font-file" accept=".ttf,.otf" style="font-size: 12px; margin-top: 4px; display: block; width: 100%;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 12px;">
+                    <div class="control-group" style="flex: 1;">
+                        <label>Size (px)</label>
+                        <input type="number" id="font-size" value="16">
+                    </div>
+                    <div class="control-group" style="flex: 1;">
+                        <label>Style</label>
+                        <div style="display: flex; gap: 8px; align-items: center; height: 100%;">
+                            <label><input type="checkbox" id="font-bold"> B</label>
+                            <label><input type="checkbox" id="font-italic"> I</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group" style="margin-top: 12px;">
+                    <label style="font-size: 11px;">CHARACTERS TO RENDER</label>
+                    <input type="text" id="render-chars" placeholder="Leave empty for default ASCII 32-127">
+                </div>
+
+                <div class="control-group" style="margin-top: 12px;">
+                    <label style="font-size: 11px;">EXPORT FORMAT</label>
+                    <select id="export-format">
+                        <option value="visual-tft">Visual TFT / XGLCD (Proportional)</option>
+                        <option value="standard">Standard Raw (Monospace Vertical)</option>
+                        <option value="ft800-l1">FT800 / EVE - L1 (1-bit AA)</option>
+                        <option value="ft800-l2">FT800 / EVE - L2 (2-bit AA)</option>
+                        <option value="ft800-l4">FT800 / EVE - L4 (4-bit AA)</option>
+                    <option value="ft800-l8">FT800 / EVE - L8 (8-bit AA)</option>
+                    <option value="fpga-3bit">FPGA 2D Accelerator (3-bit AA, 0-7)</option>
+                </select>
+            </div>
+            
+            <div class="control-group" style="margin-top: 12px;">
+                <label style="font-size: 11px;">ADVANCED</label>
+                <div style="margin-top: 4px;">
+                    <label><input type="checkbox" id="invert-pixels"> Invert Pixels (Negative Display)</label>
+                </div>
+            </div>
+            
+            <button id="generate-btn" class="primary-btn" style="margin-top: 12px; width: 100%; background: linear-gradient(135deg, #a855f7, #ec4899);">Generate Array</button>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
+
+        <div class="control-group">
+            <label>2. Emulation Settings</label>
+            <select id="display-type">
+                <option value="128x64">128 x 64 (KS0108 / ST7920 / NT7108)</option>
+                <option value="240x128">240 x 128 (T6963C / RA6963 / SED1335)</option>
+                <option value="320x240">320 x 240 (RA8835 / S1D13700 / RA8806)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Backlight</label>
+            <div class="color-options">
+                <button class="color-btn active" data-color="cyan" style="background: #00ffff;"></button>
+                <button class="color-btn" data-color="green" style="background: #4ade80;"></button>
+                <button class="color-btn" data-color="yellow" style="background: #facc15;"></button>
+                <button class="color-btn" data-color="white" style="background: #ffffff;"></button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>3. C-Array Buffer</label>
+            <textarea id="c-array-input" placeholder="Select a system font or upload a TTF, then click Generate!" spellcheck="false" style="height: 140px; font-family: monospace; font-size: 11px;"></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                <button id="parse-btn" class="primary-btn" style="flex: 2;">Parse to Emulator</button>
+                <button id="copy-btn" class="primary-btn" style="flex: 1; background: #3b82f6;">Copy</button>
+                <button id="download-btn" class="primary-btn" style="flex: 1; background: #10b981;">Save .c</button>
+            </div>
+            <div id="parse-status" class="status-msg">Waiting for input...</div>
+        </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="emulator-wrapper glass-panel">
+                <div class="emulator-header">
+                    <div class="test-string-input">
+                        <label>Test Text:</label>
+                        <input type="text" id="test-text" value="GLCD Emulator!" autocomplete="off" disabled>
+                    </div>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="glcd-canvas"></canvas>
+                    <div class="glcd-overlay"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
