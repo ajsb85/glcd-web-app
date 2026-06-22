@@ -6,7 +6,7 @@ This document outlines our development workflow and guidelines. Please read them
 
 ## Development Workflow
 
-This project is built using modern **Enterprise TypeScript** and **Vite**. The UI is strictly separated from the core hex parsing and array generation logic.
+This project is built using modern **TypeScript** and **Vite**. The UI is strictly separated from the core hex parsing and array generation logic.
 
 ### 1. Project Setup
 1. **Clone the repository:**
